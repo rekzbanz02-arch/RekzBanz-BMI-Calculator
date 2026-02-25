@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNP BMI Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0e0f13;
+    --surface: #16181f;
+    --surface2: #1e2029;
+    --border: #2a2d3a;
+    --text: #e8eaf0;
+    --muted: #6b7080;
+    --accent: #4f8ef7;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --orange: #f97316;
+    --red: #ef4444;
+    --red2: #b91c1c;
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+    background-image: radial-gradient(ellipse at 20% 0%, #1a1f35 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, #1a1520 0%, transparent 60%);
+  }
+
+  .container { max-width: 680px; margin: 0 auto; }
+
+  /* HEADER */
+  .header { text-align: center; margin-bottom: 32px; }
+  .header-badge {
+    display: inline-block;
+    background: rgba(79,142,247,0.12);
+    border: 1px solid rgba(79,142,247,0.25);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 8vw, 3.8rem);
+    letter-spacing: 3px;
+    line-height: 1;
+    background: linear-gradient(135deg, #e8eaf0 30%, #6b7080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
+  /* CONNECTION STATUS */
+  .conn-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid;
+    transition: all 0.4s;
+  }
+  .conn-bar.checking {
+    background: rgba(107,112,128,0.08);
+    border-color: rgba(107,112,128,0.25);
+    color: var(--muted);
+  }
+  .conn-bar.connected {
+    background: rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.25);
+    color: var(--green);
+  }
+  .conn-bar.failed {
+    background: rgba(239,68,68,0.08);
+    border-color: rgba(239,68,68,0.25);
+    color: var(--red);
+  }
+  .conn-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: currentColor;
+  }
+  .conn-bar.checking .conn-dot { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* RESULT CARD */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    display: none;
+    animation: slideDown 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--result-color, var(--green));
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .result-card.visible { display: block; }
+  .result-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .bmi-display { display: flex; align-items: baseline; gap: 8px; }
+  .bmi-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--result-color, var(--green));
+    text-shadow: 0 0 40px var(--result-color, var(--green));
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .bmi-label { color: var(--muted); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .result-badges { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .badge-category { background: rgba(255,255,255,0.05); border-color: var(--border); color: var(--text); }
+  .badge-pnp-ok { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(--green); }
+  .badge-pnp-no { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--red); }
+  .result-meta { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-item { font-size: 13px; color: var(--muted); }
+  .meta-item span { color: var(--text); font-weight: 500; }
+  .export-btn {
+    margin-top: 16px;
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.25);
+    color: var(--accent);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .export-btn:hover { background: rgba(79,142,247,0.2); }
+
+  /* FORM CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-row.single { grid-template-columns: 1fr; }
+  @media(max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 7px; position: relative; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+  .field input, .field select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 11px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,142,247,0.1);
+  }
+  .field input.error { border-color: var(--red); }
+  .field-hint { font-size: 11px; color: var(--muted); }
+
+  /* HEIGHT INPUT ROW */
+  .height-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    margin-bottom: 14px;
+  }
+  .height-input-row .field { flex: 1; }
+  .height-convert-btn {
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--accent);
+    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-bottom: 0;
+    title: "Height converter";
+  }
+  .height-convert-btn:hover {
+    background: rgba(79,142,247,0.15);
+    border-color: rgba(79,142,247,0.4);
+  }
+
+  /* HEIGHT CONVERTER MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    animation: modalPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+  }
+  @keyframes modalPop {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--text); border-color: rgba(79,142,247,0.4); }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .modal-apply-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #3b6fd4, #4f8ef7);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .modal-apply-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,142,247,0.35); }
+
+  /* HISTORY */
+  .history-card { display: none; }
+  .history-card.visible { display: block; }
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+  .history-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    animation: fadeIn 0.3s ease;
+  }
+  .history-bmi { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 600; }
+  .history-meta { font-size: 12px; color: var(--muted); }
+  .history-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .history-badge { font-size: 11px; padding: 3px 10px; border-radius: 50px; font-weight: 600; border: 1px solid; }
+
+  /* DROPDOWN */
+  .dropdown { margin-bottom: 16px; }
+  .dropdown-toggle {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    padding: 14px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .dropdown-toggle:hover { color: var(--text); border-color: rgba(79,142,247,0.3); }
+  .dropdown-arrow { transition: transform 0.3s; }
+  .dropdown-toggle.open .dropdown-arrow { transform: rotate(180deg); }
+  .dropdown-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 20px;
+    display: none;
+  }
+  .dropdown-content.open { display: block; }
+  .formula-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    text-align: center;
+  }
+  .std-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  .std-table th { text-align: left; padding: 8px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+  .std-table td { padding: 8px 12px; border-bottom: 1px solid rgba(42,45,58,0.5); }
+  .std-table tr:last-child td { border-bottom: none; }
+  .color-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+
+  /* CALCULATE BTN */
+  .calc-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #3b6fd4, #4f8ef7);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(79,142,247,0.25);
+    margin-top: 8px;
+  }
+  .calc-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(79,142,247,0.4); }
+  .calc-btn:active { transform: translateY(0); }
+
+  /* SAVE STATUS */
+  .save-status { text-align: center; font-size: 12px; margin-top: 8px; height: 18px; transition: all 0.3s; }
+  .save-status.saving { color: var(--muted); }
+  .save-status.saved { color: var(--green); }
+  .save-status.error { color: var(--red); }
+
+  /* ANIMATIONS */
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* LOADING SPINNER */
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(107,112,128,0.3); border-top-color: var(--muted); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  
+  @keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.field input.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+  animation: shake 0.35s ease;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">Philippine National Police</div>
+    <h1>BMI Calculator</h1>
+    <p>Body Mass Index Assessment with PNP Standards</p>
+  </div>
+
+  <!-- CONNECTION STATUS BAR -->
+  <div class="conn-bar checking" id="connBar">
+    <div class="conn-dot"></div>
+    <span id="connText">Verifying Google Sheets connection…</span>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="result-card" id="resultCard">
+    <div class="result-top">
+      <div>
+        <div class="bmi-label">BMI Score</div>
+        <div class="bmi-display">
+          <div class="bmi-number" id="bmiNumber">—</div>
+        </div>
+      </div>
+      <div class="result-badges">
+        <div class="badge badge-category" id="categoryBadge">—</div>
+        <div class="badge" id="pnpBadge">—</div>
+      </div>
+    </div>
+    <div class="result-meta">
+      <div class="meta-item">Name: <span id="rName">—</span></div>
+      <div class="meta-item">Age: <span id="rAge">—</span></div>
+      <div class="meta-item">Weight: <span id="rWeight">—</span></div>
+      <div class="meta-item">Height: <span id="rHeight">—</span></div>
+      <div class="meta-item">Date: <span id="rDate">—</span></div>
+    </div>
+    <button class="export-btn" onclick="exportTxt()">⬇ Export to .txt</button>
+    <div class="save-status" id="saveStatus"></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="card">
+    <div class="card-title">👤 Personal Information</div>
+    <div class="form-row">
+      <div class="field">
+        <label>Full Name (optional)</label>
+        <input type="text" id="name" placeholder="e.g. Juan dela Cruz" 
+oninput="onNameInput(this.value)" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label>Age *</label>
+        <input type="number" id="age" placeholder="e.g. 28" min="1" max="120">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label>Weight (kg) *</label>
+        <input type="number" id="weight" placeholder="e.g. 70" min="1" max="500" step="0.1">
+      </div>
+    </div>
+  
+    <div class="height-input-row">
+      <div class="field">
+        <label>Height (meters) *</label>
+        <input type="number" id="heightM" placeholder="e.g. 1.75" min="0.5" max="3" step="0.001">
+      </div>
+      <button class="height-convert-btn" onclick="openConverter()" title="Open height converter">⇅</button>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate BMI</button>
+  </div>
+
+  <!-- CREATOR -->
+<p style="font-family:'DM Sans',serif;font-size:13px;color:#6b7080;text-align:center;margin-top:24px;letter-spacing:1.5px;font-style:italic;">(App created by <a href="https://m.me/rekzbanz" target="_blank" style="font-weight:bold;color:#7790bb;font-style:normal;letter-spacing:2px;text-decoration:none;">RekzBanz</a>)</p>
+<br>
+  <!-- HISTORY -->
+  <div class="card history-card" id="historyCard">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>📜 History for "<span id="historyName"></span>"</span>
+      <span class="spinner" id="historySpinner" style="display:none;"></span>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <!-- DROPDOWN REFERENCE -->
+  <div class="dropdown">
+    <button class="dropdown-toggle" id="dropdownToggle" onclick="toggleDropdown()">
+      <span>📊 PNP BMI Standards & Formula</span>
+      <span class="dropdown-arrow">▼</span>
+    </button>
+    <div class="dropdown-content" id="dropdownContent">
+      <div class="formula-box">BMI = Weight (kg) ÷ Height (m)²</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">Standard BMI Categories</div>
+      <table class="std-table">
+        <thead><tr><th>BMI Range</th><th>Category</th></tr></thead>
+        <tbody>
+          <tr><td><span class="color-dot" style="background:#60a5fa"></span>&lt; 18.5</td><td>Underweight</td></tr>
+          <tr><td><span class="color-dot" style="background:#22c55e"></span>18.5 – 24.9</td><td>Normal</td></tr>
+          <tr><td><span class="color-dot" style="background:#eab308"></span>25.0 – 29.9</td><td>Overweight</td></tr>
+          <tr><td><span class="color-dot" style="background:#f97316"></span>30.0 – 34.9</td><td>Obese Class I</td></tr>
+          <tr><td><span class="color-dot" style="background:#ef4444"></span>35.0 – 39.9</td><td>Obese Class II</td></tr>
+          <tr><td><span class="color-dot" style="background:#b91c1c"></span>≥ 40.0</td><td>Obese Class III</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">PNP Acceptable BMI by Age</div>
+      <table class="std-table">
+        <thead><tr><th>Age Group</th><th>Acceptable BMI Range</th></tr></thead>
+        <tbody>
+          <tr><td>18 – 24</td><td>18.5 – 24.9</td></tr>
+          <tr><td>25 – 29</td><td>18.5 – 25.9</td></tr>
+          <tr><td>30 – 34</td><td>18.5 – 26.9</td></tr>
+          <tr><td>35 – 39</td><td>18.5 – 27.9</td></tr>
+          <tr><td>40+</td><td>18.5 – 28.9</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- HEIGHT CONVERTER MODAL -->
+<div class="modal-overlay" id="converterModal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">📏 Height Converter</div>
+    <button class="modal-close" onclick="closeConverter()">✕</button>
+    <div class="modal-grid">
+      <div class="field">
+        <label>Meters</label>
+        <input type="number" id="convM" placeholder="1.75" step="0.001" min="0.3" max="3" oninput="convFrom('m')">
+      </div>
+      <div class="field">
+        <label>Centimeters</label>
+        <input type="number" id="convCm" placeholder="175" step="0.1" min="30" max="300" oninput="convFrom('cm')">
+      </div>
+      <div class="field">
+        <label>Feet</label>
+        <input type="number" id="convFt" placeholder="5" step="1" min="1" max="9" oninput="convFrom('ft')">
+      </div>
+      <div class="field">
+        <label>Inches</label>
+        <input type="number" id="convIn" placeholder="9" step="0.1" min="0" max="11.9" oninput="convFrom('ft')">
+      </div>
+    </div>
+    <button class="modal-apply-btn" onclick="applyConverter()">✔ Apply to Height Field</button>
+  </div>
+</div>
+
+<script>
+  // ── HARDCODED SCRIPT URL ───────────────────────────────────────
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye4ComyA8u19lx0e2uGX1YOXDACmn1vrEBp7cSSZKxcdMGbbHM4eFEJh1r8QToIVFe/exec';
+
+  // ── STATE ──────────────────────────────────────────────────────
+  let lastResult    = null;
+  let searchTimeout = null;
+  let isConnected   = false;
+
+  // ── CONNECTION VERIFICATION ON LOAD ───────────────────────────
+  async function verifyConnection() {
+    const bar  = document.getElementById('connBar');
+    const text = document.getElementById('connText');
+    bar.className  = 'conn-bar checking';
+    text.textContent = 'Verifying Google Sheets connection…';
+
+    try {
+      // Use a ping-style GET: we expect valid JSON (even empty array []) or any 200 response
+      const res = await fetch(SCRIPT_URL + '?ping=1', { method: 'GET', mode: 'cors' });
+      if (res.ok) {
+        // Try to parse JSON — if the sheet returns valid JSON we're good
+        const txt = await res.text();
+        JSON.parse(txt); // will throw if not JSON
+        isConnected = true;
+        bar.className  = 'conn-bar connected';
+        text.textContent = '✅ Google Sheets connected — cloud save & history are active';
+      } else {
+        throw new Error('non-200');
+      }
+    } catch (err) {
+      // fetch with no-cors can't be fully verified, try no-cors fallback ping
+      try {
+        await fetch(SCRIPT_URL + '?ping=1', { method: 'GET', mode: 'no-cors' });
+        // no-cors won't let us read response but if it didn't throw, the server is reachable
+        isConnected = true;
+        bar.className  = 'conn-bar connected';
+        text.textContent = '✅ Google Sheets connected — cloud save & history are active';
+      } catch (e) {
+        isConnected = false;
+        bar.className  = 'conn-bar failed';
+        text.textContent = '⚠️ Could not reach Google Sheets — results will not be saved';
+      }
+    }
+  }
+
+  window.addEventListener('load', verifyConnection);
+
+  // ── HEIGHT CONVERTER MODAL ─────────────────────────────────────
+  function openConverter() {
+    // Pre-populate from current height field value
+    const currentM = document.getElementById('heightM').value;
+    if (currentM) {
+      document.getElementById('convM').value = currentM;
+      convFrom('m');
+    } else {
+      // Clear all
+      ['convM','convCm','convFt','convIn'].forEach(id => document.getElementById(id).value = '');
+    }
+    document.getElementById('converterModal').classList.add('open');
+    document.getElementById('convM').focus();
+  }
+
+  function closeConverter() {
+    document.getElementById('converterModal').classList.remove('open');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('converterModal')) closeConverter();
+  }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeConverter();
+  });
+
+  function convFrom(source) {
+    const mEl  = document.getElementById('convM');
+    const cmEl = document.getElementById('convCm');
+    const ftEl = document.getElementById('convFt');
+    const inEl = document.getElementById('convIn');
+
+    if (source === 'm') {
+      const val = parseFloat(mEl.value);
+      if (!isNaN(val) && val > 0) {
+        cmEl.value = (val * 100).toFixed(1);
+        const totalIn = val / 0.0254;
+        ftEl.value = Math.floor(totalIn / 12);
+        inEl.value = (totalIn % 12).toFixed(1);
+      } else {
+        cmEl.value = ''; ftEl.value = ''; inEl.value = '';
+      }
+    } else if (source === 'cm') {
+      const val = parseFloat(cmEl.value);
+      if (!isNaN(val) && val > 0) {
+        const meters = val / 100;
+        mEl.value = meters.toFixed(3);
+        const totalIn = val / 2.54;
+        ftEl.value = Math.floor(totalIn / 12);
+        inEl.value = (totalIn % 12).toFixed(1);
+      } else {
+        mEl.value = ''; ftEl.value = ''; inEl.value = '';
+      }
+    } else if (source === 'ft') {
+      const f = parseFloat(ftEl.value) || 0;
+      const i = parseFloat(inEl.value) || 0;
+      if (f > 0 || i > 0) {
+        const totalCm = (f * 12 + i) * 2.54;
+        mEl.value  = (totalCm / 100).toFixed(3);
+        cmEl.value = totalCm.toFixed(1);
+      } else {
+        mEl.value = ''; cmEl.value = '';
+      }
+    }
+  }
+
+  function applyConverter() {
+    const mVal = document.getElementById('convM').value;
+    if (!mVal || isNaN(parseFloat(mVal)) || parseFloat(mVal) <= 0) {
+      alert('Please enter a valid height value first.');
+      return;
+    }
+    document.getElementById('heightM').value = parseFloat(mVal).toFixed(3);
+    document.getElementById('heightM').classList.remove('error');
+    closeConverter();
+  }
+
+  // ── BMI LOGIC ─────────────────────────────────────────────────
+  function getCategory(bmi) {
+    if (bmi < 18.5) return 'Underweight';
+    if (bmi < 25)   return 'Normal';
+    if (bmi < 30)   return 'Overweight';
+    if (bmi < 35)   return 'Obese Class I';
+    if (bmi < 40)   return 'Obese Class II';
+    return 'Obese Class III';
+  }
+
+  function getPNPMax(age) {
+    if (age < 25) return 24.9;
+    if (age < 30) return 25.9;
+    if (age < 35) return 26.9;
+    if (age < 40) return 27.9;
+    return 28.9;
+  }
+
+  function getPNPStatus(bmi, age) {
+    return (bmi >= 18.5 && bmi <= getPNPMax(age)) ? 'Acceptable' : 'Not Acceptable';
+  }
+
+  function getCategoryColor(category) {
+    const map = {
+      'Underweight':    '#60a5fa',
+      'Normal':         '#22c55e',
+      'Overweight':     '#eab308',
+      'Obese Class I':  '#f97316',
+      'Obese Class II': '#ef4444',
+      'Obese Class III':'#b91c1c'
+    };
+    return map[category] || '#6b7080';
+  }
+
+  // ── FORMAT CALCULATE ─────────────────────────────────────────────────
+function formatDate(d) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const yr  = d.getFullYear();
+  const mon = months[d.getMonth()];
+  const day = String(d.getDate()).padStart(2, '0');
+  let   h   = d.getHours();
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const ap  = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return yr + ' ' + mon + ' ' + day + ', ' + h + ':' + min + ' ' + ap;
+}
+
+function parseSheetDate(str) {
+  if (!str || str === '—') return '—';
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return str;
+  return formatDate(d);
+}
+
+
+  // ── CALCULATE ─────────────────────────────────────────────────
+  function calculate() {
+    
+	const nameInput = document.getElementById('name');
+const name = nameInput.value.trim();
+
+if (!name) {
+  nameInput.classList.add('error');
+
+  // Auto focus + select text
+  nameInput.focus();
+  nameInput.select();
+
+  // Remove and re-add animation (so it can repeat)
+  nameInput.style.animation = 'none';
+  nameInput.offsetHeight; // force reflow
+  nameInput.style.animation = null;
+
+  alert('⚠️ Please enter your full name.');
+  return;
+} else {
+  nameInput.classList.remove('error');
+}
+	
+    const age    = parseInt(document.getElementById('age').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+    const height = parseFloat(document.getElementById('heightM').value);
+
+    // Validation
+    let valid = true;
+    ['age','weight','heightM'].forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('error');
+      if (!el.value || isNaN(parseFloat(el.value))) {
+        el.classList.add('error');
+        valid = false;
+      }
+    });
+    if (!valid) { alert('Please fill in Age, Weight, and Height (meters).'); return; }
+    if (age < 1 || age > 120) { alert('Please enter a valid age (1–120).'); return; }
+    if (height <= 0 || height > 3) { alert('Height must be between 0.5 and 3.0 meters.'); return; }
+    if (weight <= 0 || weight > 500) { alert('Please enter a valid weight.'); return; }
+
+    const bmi      = weight / (height * height);
+    const bmiFixed = bmi.toFixed(2);
+    const category = getCategory(bmi);
+    const pnpStatus= getPNPStatus(bmi, age);
+    const color    = getCategoryColor(category);
+    const date     = formatDate(new Date());
+
+    lastResult = { name: name || 'Anonymous', age, weight, height, bmi: bmiFixed, category, pnpStatus, date };
+
+    // Update result card
+    const card = document.getElementById('resultCard');
+    card.style.setProperty('--result-color', color);
+    card.classList.add('visible');
+
+    document.getElementById('bmiNumber').textContent = bmiFixed;
+    document.getElementById('bmiNumber').style.color = color;
+    document.getElementById('bmiNumber').style.textShadow = `0 0 40px ${color}`;
+    document.getElementById('categoryBadge').textContent = category;
+
+    const pnpBadge = document.getElementById('pnpBadge');
+    if (pnpStatus === 'Acceptable') {
+      pnpBadge.textContent = '✅ ' + pnpStatus;
+      pnpBadge.className = 'badge badge-pnp-ok';
+    } else {
+      pnpBadge.textContent = '❌ ' + pnpStatus;
+      pnpBadge.className = 'badge badge-pnp-no';
+    }
+
+    document.getElementById('rName').textContent   = name || '—';
+    document.getElementById('rAge').textContent    = age;
+    document.getElementById('rWeight').textContent = weight + ' kg';
+    document.getElementById('rHeight').textContent = height + ' m';
+    document.getElementById('rDate').textContent   = date;
+
+    card.scrollIntoView({ behavior:'smooth', block:'start' });
+    saveToSheets(lastResult).then(() => {
+  if (lastResult.name && lastResult.name !== 'Anonymous') {
+    setTimeout(() => {
+      fetchHistory(lastResult.name);
+    }, 800); // small delay for sheet update
+  }
+});
+  }
+
+  // ── GOOGLE SHEETS SAVE ────────────────────────────────────────
+  async function saveToSheets(data) {
+  const statusEl = document.getElementById('saveStatus');
+  statusEl.className = 'save-status saving';
+  statusEl.innerHTML = '<span class="spinner"></span>Saving to Google Sheets…';
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    statusEl.className = 'save-status saved';
+    statusEl.textContent = '✅ Saved to Google Sheets';
+
+    return true; // ✅ important
+  } catch (err) {
+    statusEl.className = 'save-status error';
+    statusEl.textContent = '⚠️ Could not save to Google Sheets';
+
+    return false;
+  }
+}
+
+  // ── AUTO SEARCH (NAME HISTORY) ────────────────────────────────
+  function onNameInput(value) {
+    clearTimeout(searchTimeout);
+    const historyCard = document.getElementById('historyCard');
+    const trimmed = value.trim();
+
+    if (!trimmed || trimmed.length < 2) {
+      historyCard.classList.remove('visible');
+      return;
+    }
+    // Debounce 500ms then fetch
+    searchTimeout = setTimeout(() => fetchHistory(trimmed), 500);
+  }
+
+  async function fetchHistory(name) {
+    const historyCard = document.getElementById('historyCard');
+    const spinner     = document.getElementById('historySpinner');
+    const list        = document.getElementById('historyList');
+    const nameLabel   = document.getElementById('historyName');
+
+    nameLabel.textContent = name;
+    historyCard.classList.add('visible');
+    spinner.style.display = 'inline-block';
+    list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">Fetching records…</div>';
+
+    try {
+      const res = await fetch(SCRIPT_URL + '?name=' + encodeURIComponent(name), {
+        method: 'GET',
+        mode: 'cors'
+      });
+
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      const records = await res.json();
+      spinner.style.display = 'none';
+
+      if (!Array.isArray(records) || records.length === 0) {
+        list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">No records found for "' + name + '".</div>';
+        return;
+      }
+
+      // Show newest records first
+      const sorted = records.slice().reverse();
+      list.innerHTML = '';
+      sorted.forEach(function(r) {
+        const color  = getCategoryColor(r.category);
+        const pnpOk  = r.pnpStatus === 'Acceptable';
+        const bmiVal = parseFloat(r.bmi);
+        const div    = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML =
+          '<div>' +
+            '<div class="history-bmi" style="color:' + color + '">' + (isNaN(bmiVal) ? r.bmi : bmiVal.toFixed(2)) + '</div>' +
+            '<div class="history-meta">' + parseSheetDate(r.date) + ' · ' + (r.weight || '—') + ' kg · ' + (r.height || '—') + ' m</div>' +
+          '</div>' +
+          '<div class="history-badges">' +
+            '<span class="history-badge" style="color:' + color + ';border-color:' + color + '40;background:' + color + '15">' + (r.category || '—') + '</span>' +
+            '<span class="history-badge" style="' + (pnpOk ? 'color:#22c55e;border-color:#22c55e40;background:#22c55e15' : 'color:#ef4444;border-color:#ef444440;background:#ef444415') + '">' + (pnpOk ? '✅ OK' : '❌ Fail') + '</span>' +
+          '</div>';
+        list.appendChild(div);
+      });
+
+    } catch (err) {
+      spinner.style.display = 'none';
+      list.innerHTML = '<div style="color:var(--red);font-size:13px;text-align:center;padding:12px;">Could not load history. The Google Sheets API may require CORS — results save via no-cors but history read requires the sheet to be published.</div>';
+    }
+  }
+
+  // ── EXPORT TXT ────────────────────────────────────────────────
+  function exportTxt() {
+    if (!lastResult) return;
+    const r = lastResult;
+    const content =
+      'PNP BMI CALCULATOR — RESULT REPORT\n' +
+      '=====================================\n' +
+      'Date       : ' + r.date + '\n' +
+      'Name       : ' + r.name + '\n' +
+      'Age        : ' + r.age + '\n' +
+      'Weight     : ' + r.weight + ' kg\n' +
+      'Height     : ' + r.height + ' m\n' +
+      '-------------------------------------\n' +
+      'BMI Score  : ' + r.bmi + '\n' +
+      'Category   : ' + r.category + '\n' +
+      'PNP Status : ' + r.pnpStatus + '\n' +
+      '=====================================\n' +
+      'Generated by PNP BMI Calculator';
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = (r.name !== 'Anonymous' ? r.name.replace(/\s+/g,'_') : 'BMI_Result') + '.txt';
+    link.click();
+  }
+
+  // ── DROPDOWN ──────────────────────────────────────────────────
+  function toggleDropdown() {
+    document.getElementById('dropdownToggle').classList.toggle('open');
+    document.getElementById('dropdownContent').classList.toggle('open');
+  }
+
+</script>
+</body>
+</html>
