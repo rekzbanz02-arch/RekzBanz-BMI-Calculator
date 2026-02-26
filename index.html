@@ -424,6 +424,233 @@
   100% { transform: translateX(0); }
 }
 
+/* ── KG TO LOSE BANNER ─────────────────────────────────── */
+.kg-lose-banner {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid;
+  animation: fadeIn 0.4s ease;
+}
+.kg-lose-banner.visible { display: flex; }
+.kg-lose-banner.overweight {
+  background: rgba(234,179,8,0.08);
+  border-color: rgba(234,179,8,0.3);
+  color: var(--yellow);
+}
+.kg-lose-banner.obese {
+  background: rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.3);
+  color: var(--red);
+}
+.kg-lose-banner.underweight {
+  background: rgba(96,165,250,0.08);
+  border-color: rgba(96,165,250,0.3);
+  color: #60a5fa;
+}
+.kg-lose-banner.normal {
+  background: rgba(34,197,94,0.08);
+  border-color: rgba(34,197,94,0.3);
+  color: var(--green);
+}
+.kg-lose-icon { font-size: 18px; flex-shrink: 0; }
+.kg-lose-text { line-height: 1.5; }
+.kg-lose-value { font-family: 'JetBrains Mono', monospace; font-size: 1.1em; }
+
+/* ── HELP TOOLTIP ───────────────────────────────────────── */
+.field-header { display: flex; align-items: center; gap: 6px; }
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: rgba(107,112,128,0.2);
+  border: 1px solid rgba(107,112,128,0.35);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.help-btn:hover { background: rgba(79,142,247,0.2); border-color: rgba(79,142,247,0.5); color: var(--accent); }
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e2029;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 13px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 999;
+  text-transform: none;
+  letter-spacing: 0;
+  width: max-content;
+  max-width: 220px;
+  white-space: normal;
+  text-align: center;
+}
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--border);
+}
+.help-btn:hover .tooltip,
+.help-btn:focus .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── AUTOCOMPLETE DROPDOWN ──────────────────────────────── */
+.name-wrapper { position: relative; }
+.autocomplete-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid rgba(79,142,247,0.35);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  z-index: 500;
+  overflow: hidden;
+  display: none;
+  animation: fadeIn 0.15s ease;
+}
+.autocomplete-list.visible { display: block; }
+.autocomplete-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(42,45,58,0.5);
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover, .autocomplete-item.active { background: rgba(79,142,247,0.1); }
+.autocomplete-item-icon { font-size: 14px; color: var(--muted); }
+.autocomplete-item-name { font-weight: 600; color: var(--text); }
+.autocomplete-item-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.autocomplete-header {
+  padding: 7px 14px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(0,0,0,0.15);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── SEARCH HELP TEXT ───────────────────────────────────── */
+.name-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.name-hint .hint-icon { font-size: 10px; }
+
+/* ── HELP PANEL ─────────────────────────────────────────── */
+.help-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  display: none;
+}
+.help-panel.visible { display: block; }
+.help-section { margin-bottom: 18px; }
+.help-section:last-child { margin-bottom: 0; }
+.help-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.help-step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.help-step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(79,142,247,0.15);
+  border: 1px solid rgba(79,142,247,0.3);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.help-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(79,142,247,0.1);
+  border: 1px solid rgba(79,142,247,0.2);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 50px;
+}
+
+/* Help toggle button */
+.help-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(107,112,128,0.1);
+  border: 1px solid rgba(107,112,128,0.25);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 14px;
+}
+.help-toggle-btn:hover { color: var(--text); border-color: rgba(79,142,247,0.4); background: rgba(79,142,247,0.08); }
+
 .field input.error {
   border-color: var(--red);
   box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
@@ -520,8 +747,41 @@
       <div class="meta-item">Height: <span id="rHeight">—</span></div>
       <div class="meta-item">Date: <span id="rDate">—</span></div>
     </div>
+    <!-- KG TO LOSE BANNER -->
+    <div class="kg-lose-banner" id="kgLoseBanner">
+      <span class="kg-lose-icon" id="kgLoseIcon">⚖️</span>
+      <span class="kg-lose-text" id="kgLoseText"></span>
+    </div>
     <button class="export-btn" onclick="exportTxt()">⬇ Export to .txt</button>
     <div class="save-status" id="saveStatus"></div>
+  </div>
+
+  <!-- HELP TOGGLE -->
+  <button class="help-toggle-btn" onclick="toggleHelp()" id="helpToggleBtn">❓ How to use this app</button>
+
+  <!-- HELP PANEL -->
+  <div class="help-panel" id="helpPanel">
+    <div class="help-section">
+      <div class="help-section-title">🚀 Quick Start Guide</div>
+      <div class="help-step"><div class="help-step-num">1</div><div>Type your <strong>Full Name</strong> — the app will automatically search for your past BMI history from Google Sheets as you type (after 2+ characters).</div></div>
+      <div class="help-step"><div class="help-step-num">2</div><div>Enter your <strong>Age</strong>, <strong>Weight</strong> (in kg), and <strong>Height</strong> (in meters). Use the <span class="help-chip">⇅ converter</span> button if you know your height in feet/inches or centimeters.</div></div>
+      <div class="help-step"><div class="help-step-num">3</div><div>Click <span class="help-chip">Calculate BMI</span> to get your result. It will also show how many <strong>kg you need to lose</strong> (or gain) to reach a healthy BMI.</div></div>
+      <div class="help-step"><div class="help-step-num">4</div><div>Your result is <strong>automatically saved</strong> to Google Sheets (cloud). You can also <span class="help-chip">⬇ Export to .txt</span> for a printable record.</div></div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">🔍 Name Search & History</div>
+      <div class="help-step"><div class="help-step-num">→</div><div>Start typing your name in the <strong>Full Name</strong> field. After 2 characters, the app will automatically search Google Sheets for your past records.</div></div>
+      <div class="help-step"><div class="help-step-num">→</div><div>If you've been assessed before, a <strong>history panel</strong> will appear below the form showing all your previous BMI scores, sorted newest first.</div></div>
+      <div class="help-step"><div class="help-step-num">→</div><div>History fetching requires the Google Sheets connection to be <span class="help-chip" style="color:var(--green);border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.1)">✅ Connected</span>.</div></div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">📏 Height Entry Tips</div>
+      <div class="help-step"><div class="help-step-num">→</div><div>Height must be in <strong>meters</strong> (e.g., 1.75 for 5'9"). Click the <span class="help-chip">⇅</span> button to open the height converter — enter feet & inches or centimeters and click Apply.</div></div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">⚖️ About PNP Standards</div>
+      <div class="help-step"><div class="help-step-num">→</div><div>PNP uses age-adjusted BMI cutoffs. The acceptable upper limit increases with age (24.9 for ages 18–24, up to 28.9 for ages 40+). See the standards table below.</div></div>
+    </div>
   </div>
 
   <!-- FORM -->
@@ -529,28 +789,44 @@
     <div class="card-title">👤 Personal Information</div>
     <div class="form-row">
       <div class="field">
-        <label>Full Name *</label>
-        <input type="text" id="name" placeholder="e.g. Juan dela Cruz" 
-oninput="onNameInput(this.value)" autocomplete="off" required>
+        <div class="field-header">
+          <label>Full Name *</label>
+          <span class="help-btn" tabindex="0">?<span class="tooltip">Enter your complete name as it appears in official records. The app will search your past BMI history as you type.</span></span>
+        </div>
+        <div class="name-wrapper">
+          <input type="text" id="name" placeholder="e.g. Juan dela Cruz" 
+oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete="off" required>
+          <div class="autocomplete-list" id="autocompleteList"></div>
+        </div>
+        <div class="name-hint"><span class="hint-icon">🔍</span> Type 2+ characters to auto-search history</div>
       </div>
       <div class="field">
-        <label>Age *</label>
+        <div class="field-header">
+          <label>Age *</label>
+          <span class="help-btn" tabindex="0">?<span class="tooltip">Enter your age in years (1–120). Age affects the PNP acceptable BMI range.</span></span>
+        </div>
         <input type="number" id="age" placeholder="e.g. 28" min="1" max="120">
       </div>
     </div>
     <div class="form-row single">
       <div class="field">
-        <label>Weight (kg) *</label>
+        <div class="field-header">
+          <label>Weight (kg) *</label>
+          <span class="help-btn" tabindex="0">?<span class="tooltip">Enter your current body weight in kilograms. For pounds, multiply lbs × 0.453 to convert to kg.</span></span>
+        </div>
         <input type="number" id="weight" placeholder="e.g. 70" min="1" max="500" step="0.1">
       </div>
     </div>
   
     <div class="height-input-row">
       <div class="field">
-        <label>Height (meters) *</label>
+        <div class="field-header">
+          <label>Height (meters) *</label>
+          <span class="help-btn" tabindex="0">?<span class="tooltip">Enter height in meters (e.g. 1.75 m). Use the ⇅ button to convert from feet/inches or centimeters.</span></span>
+        </div>
         <input type="number" id="heightM" placeholder="e.g. 1.75" min="0.5" max="3" step="0.001">
       </div>
-      <button class="height-convert-btn" onclick="openConverter()" title="Open height converter">⇅</button>
+      <button class="height-convert-btn" onclick="openConverter()" title="Open height converter (feet, inches, cm → meters)">⇅</button>
     </div>
     <button class="calc-btn" onclick="calculate()">Calculate BMI</button>
   </div>
@@ -860,8 +1136,45 @@ if (!name) {
     const pnpStatus= getPNPStatus(bmi, age);
     const color    = getCategoryColor(category);
     const date     = formatDate(new Date());
+    const pnpMax   = getPNPMax(age);
 
-    lastResult = { name: name || 'Anonymous', age, weight, height, bmi: bmiFixed, category, pnpStatus, date };
+    // ── KG TO LOSE / GAIN CALCULATION ──────────────────────────
+    let kgDiff = 0;
+    let kgBanner = document.getElementById('kgLoseBanner');
+    let kgText   = document.getElementById('kgLoseText');
+    let kgIcon   = document.getElementById('kgLoseIcon');
+
+    if (bmi > 24.9) {
+      // Need to lose weight — target BMI 24.9 (upper edge of Normal)
+      const targetWeight = 24.9 * height * height;
+      kgDiff = +(weight - targetWeight).toFixed(1);
+      kgBanner.className = 'kg-lose-banner visible ' + (bmi >= 30 ? 'obese' : 'overweight');
+      kgIcon.textContent = '🔻';
+      kgText.innerHTML = `Need to lose <span class="kg-lose-value">${kgDiff} kg</span> to reach a Normal BMI (24.9). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)} kg</span>.`;
+    } else if (bmi < 18.5) {
+      // Underweight — need to gain
+      const targetWeight = 18.5 * height * height;
+      kgDiff = -(+(targetWeight - weight).toFixed(1));
+      kgBanner.className = 'kg-lose-banner visible underweight';
+      kgIcon.textContent = '🔺';
+      const gainAmt = Math.abs(kgDiff);
+      kgText.innerHTML = `Need to gain <span class="kg-lose-value">${gainAmt} kg</span> to reach a Normal BMI (18.5). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)} kg</span>.`;
+    } else {
+      kgBanner.className = 'kg-lose-banner visible normal';
+      kgIcon.textContent = '✅';
+      kgDiff = 0;
+      kgText.innerHTML = `You are within the <span class="kg-lose-value">Normal BMI range</span>. No weight adjustment needed!`;
+    }
+
+    // Also check vs PNP limit
+    let pnpKgNote = '';
+    if (bmi > pnpMax) {
+      const pnpTargetW = pnpMax * height * height;
+      const pnpKgLose = (weight - pnpTargetW).toFixed(1);
+      pnpKgNote = ` (PNP limit: lose ${pnpKgLose} kg to reach BMI ${pnpMax})`;
+    }
+
+    lastResult = { name: name || 'Anonymous', age, weight, height, bmi: bmiFixed, category, pnpStatus, date, kgToLose: kgDiff, kgNote: pnpKgNote };
 
     // Update result card
     const card = document.getElementById('resultCard');
@@ -904,12 +1217,25 @@ if (!name) {
   statusEl.className = 'save-status saving';
   statusEl.innerHTML = '<span class="spinner"></span>Saving to Google Sheets…';
 
+  // Build payload including kgToLose
+  const payload = {
+    name: data.name,
+    age: data.age,
+    weight: data.weight,
+    height: data.height,
+    bmi: data.bmi,
+    category: data.category,
+    pnpStatus: data.pnpStatus,
+    date: data.date,
+    kgToLose: data.kgToLose !== undefined ? data.kgToLose : ''
+  };
+
   try {
     await fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(payload)
     });
 
     statusEl.className = 'save-status saved';
@@ -924,6 +1250,76 @@ if (!name) {
   }
 }
 
+  // ── HELP PANEL TOGGLE ─────────────────────────────────────────
+  function toggleHelp() {
+    const panel = document.getElementById('helpPanel');
+    const btn   = document.getElementById('helpToggleBtn');
+    panel.classList.toggle('visible');
+    btn.textContent = panel.classList.contains('visible') ? '✕ Close Help' : '❓ How to use this app';
+  }
+
+  // ── AUTOCOMPLETE ──────────────────────────────────────────────
+  let nameCache = []; // {name, lastDate, lastBmi, lastCategory}
+  let autocompleteActive = -1;
+
+  function onNameKeydown(e) {
+    const list = document.getElementById('autocompleteList');
+    const items = list.querySelectorAll('.autocomplete-item');
+    if (!list.classList.contains('visible') || items.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      autocompleteActive = Math.min(autocompleteActive + 1, items.length - 1);
+      updateActiveItem(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      autocompleteActive = Math.max(autocompleteActive - 1, 0);
+      updateActiveItem(items);
+    } else if (e.key === 'Enter' && autocompleteActive >= 0) {
+      e.preventDefault();
+      items[autocompleteActive].click();
+    } else if (e.key === 'Escape') {
+      hideAutocomplete();
+    }
+  }
+
+  function updateActiveItem(items) {
+    items.forEach((item, i) => {
+      item.classList.toggle('active', i === autocompleteActive);
+    });
+  }
+
+  function hideAutocomplete() {
+    document.getElementById('autocompleteList').classList.remove('visible');
+    autocompleteActive = -1;
+  }
+
+  function showAutocomplete(matches) {
+    const list = document.getElementById('autocompleteList');
+    if (!matches || matches.length === 0) { hideAutocomplete(); return; }
+    list.innerHTML = '<div class="autocomplete-header">📋 Past records found</div>';
+    matches.slice(0, 5).forEach(function(m, idx) {
+      const item = document.createElement('div');
+      item.className = 'autocomplete-item';
+      item.innerHTML =
+        '<span class="autocomplete-item-icon">👤</span>' +
+        '<div><div class="autocomplete-item-name">' + m.name + '</div>' +
+        '<div class="autocomplete-item-meta">' + (m.lastDate || '') + (m.lastBmi ? ' · BMI ' + m.lastBmi : '') + (m.lastCategory ? ' · ' + m.lastCategory : '') + '</div></div>';
+      item.addEventListener('click', function() {
+        document.getElementById('name').value = m.name;
+        hideAutocomplete();
+        fetchHistory(m.name);
+      });
+      list.appendChild(item);
+    });
+    list.classList.add('visible');
+    autocompleteActive = -1;
+  }
+
+  // Close autocomplete when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.name-wrapper')) hideAutocomplete();
+  });
+
   // ── AUTO SEARCH (NAME HISTORY) ────────────────────────────────
   function onNameInput(value) {
     clearTimeout(searchTimeout);
@@ -932,8 +1328,17 @@ if (!name) {
 
     if (!trimmed || trimmed.length < 2) {
       historyCard.classList.remove('visible');
+      hideAutocomplete();
       return;
     }
+
+    // Show autocomplete suggestions from cache immediately
+    const lc = trimmed.toLowerCase();
+    const matches = nameCache.filter(function(m) {
+      return m.name.toLowerCase().includes(lc);
+    });
+    showAutocomplete(matches);
+
     // Debounce 500ms then fetch
     searchTimeout = setTimeout(() => fetchHistory(trimmed), 500);
   }
@@ -965,6 +1370,20 @@ if (!name) {
         return;
       }
 
+      // Populate name cache for autocomplete (deduplicate)
+      const newest = records[records.length - 1] || {};
+      const existingIdx = nameCache.findIndex(function(m){ return m.name.toLowerCase() === name.toLowerCase(); });
+      const cacheEntry = { name: newest.name || name, lastDate: newest.date ? parseSheetDate(newest.date) : '', lastBmi: newest.bmi || '', lastCategory: newest.category || '' };
+      if (existingIdx >= 0) nameCache[existingIdx] = cacheEntry;
+      else nameCache.push(cacheEntry);
+
+      // Show current autocomplete matches
+      const lc = (document.getElementById('name').value || '').toLowerCase();
+      if (lc.length >= 2) {
+        const matches = nameCache.filter(function(m){ return m.name.toLowerCase().includes(lc); });
+        showAutocomplete(matches);
+      }
+
       // Show newest records first
       const sorted = records.slice().reverse();
       list.innerHTML = '';
@@ -974,10 +1393,13 @@ if (!name) {
         const bmiVal = parseFloat(r.bmi);
         const div    = document.createElement('div');
         div.className = 'history-item';
+        const kgLoseStr = (r.kgToLose !== undefined && r.kgToLose !== '' && r.kgToLose !== null)
+          ? (' · ' + (parseFloat(r.kgToLose) < 0 ? '🔺 +' + Math.abs(r.kgToLose) + ' kg needed' : parseFloat(r.kgToLose) > 0 ? '🔻 -' + r.kgToLose + ' kg to normal' : '✅ Normal BMI'))
+          : '';
         div.innerHTML =
           '<div>' +
             '<div class="history-bmi" style="color:' + color + '">' + (isNaN(bmiVal) ? r.bmi : bmiVal.toFixed(2)) + '</div>' +
-            '<div class="history-meta">' + parseSheetDate(r.date) + ' · ' + (r.weight || '—') + ' kg · ' + (r.height || '—') + ' m</div>' +
+            '<div class="history-meta">' + parseSheetDate(r.date) + ' · ' + (r.weight || '—') + ' kg · ' + (r.height || '—') + ' m' + kgLoseStr + '</div>' +
           '</div>' +
           '<div class="history-badges">' +
             '<span class="history-badge" style="color:' + color + ';border-color:' + color + '40;background:' + color + '15">' + (r.category || '—') + '</span>' +
@@ -996,6 +1418,11 @@ if (!name) {
   function exportTxt() {
     if (!lastResult) return;
     const r = lastResult;
+    const kgLine = r.kgToLose < 0
+      ? 'Kg to Gain  : ' + Math.abs(r.kgToLose) + ' kg (to reach Normal BMI)'
+      : r.kgToLose > 0
+      ? 'Kg to Lose  : ' + r.kgToLose + ' kg (to reach Normal BMI)'
+      : 'Kg Adjust   : None — already at Normal BMI';
     const content =
       'PNP BMI CALCULATOR — RESULT REPORT\n' +
       '=====================================\n' +
@@ -1008,6 +1435,7 @@ if (!name) {
       'BMI Score  : ' + r.bmi + '\n' +
       'Category   : ' + r.category + '\n' +
       'PNP Status : ' + r.pnpStatus + '\n' +
+      kgLine + '\n' +
       '=====================================\n' +
       'Generated by PNP BMI Calculator';
 
