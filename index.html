@@ -5,22 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PNP BMI Calculator</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Nunito+Sans:wght@300;400;500;600&display=swap');
 
   :root {
-    --bg: #0e0f13;
-    --surface: #16181f;
-    --surface2: #1e2029;
-    --border: #2a2d3a;
-    --text: #e8eaf0;
-    --muted: #6b7080;
-    --accent: #4f8ef7;
-    --green: #22c55e;
-    --yellow: #eab308;
-    --orange: #f97316;
-    --red: #ef4444;
-    --red2: #b91c1c;
-    --radius: 14px;
+    --bg: #f7f8fc;
+    --surface: #ffffff;
+    --surface2: #f0f2f8;
+    --border: #e2e5f0;
+    --border-strong: #c9cedf;
+    --text: #1a1d2e;
+    --muted: #8890a8;
+    --accent: #4461f2;
+    --accent-light: rgba(68,97,242,0.08);
+    --accent-mid: rgba(68,97,242,0.18);
+    --green: #0ea06a;
+    --yellow: #d97b06;
+    --orange: #e05c1a;
+    --red: #d93025;
+    --red2: #a81c14;
+    --radius: 16px;
+    --shadow-sm: 0 1px 3px rgba(20,25,60,0.06), 0 4px 12px rgba(20,25,60,0.04);
+    --shadow-md: 0 2px 8px rgba(20,25,60,0.06), 0 8px 24px rgba(20,25,60,0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,72 +33,77 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
     min-height: 100vh;
-    padding: 24px 16px 60px;
-    background-image: radial-gradient(ellipse at 20% 0%, #1a1f35 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 100%, #1a1520 0%, transparent 60%);
+    padding: 40px 16px 80px;
   }
 
-  .container { max-width: 680px; margin: 0 auto; }
+  .container { max-width: 640px; margin: 0 auto; }
 
   /* HEADER */
-.header { text-align: center; margin-bottom: 1px; position: relative; padding-bottom: 20px; }
+.header { text-align: center; margin-bottom: 24px; }
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
   .header-badge {
     display: inline-block;
-    background: rgba(79,142,247,0.12);
-    border: 1px solid rgba(79,142,247,0.25);
+    background: var(--accent-light);
+    border: 1.5px solid var(--accent-mid);
     color: var(--accent);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    padding: 5px 14px;
+    padding: 5px 16px;
     border-radius: 50px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    font-family: 'DM Mono', monospace;
   }
   .header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.4rem, 8vw, 3.8rem);
-    letter-spacing: 3px;
-    line-height: 1;
-    background: linear-gradient(135deg, #e8eaf0 30%, #6b7080);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 7vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    color: var(--text);
   }
-  .header p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+  .header p { color: var(--muted); font-size: 14px; margin-top: 8px; font-weight: 400; }
 
   /* CONNECTION STATUS */
   .conn-bar {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 18px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    padding: 11px 18px;
+    border-radius: 12px;
+    margin-bottom: 24px;
     font-size: 13px;
-    font-weight: 500;
-    border: 1px solid;
+    font-weight: 600;
+    border: 1.5px solid;
     transition: all 0.4s;
+    font-family: 'Nunito Sans', sans-serif;
   }
   .conn-bar.checking {
-    background: rgba(107,112,128,0.08);
-    border-color: rgba(107,112,128,0.25);
+    background: var(--surface2);
+    border-color: var(--border);
     color: var(--muted);
   }
   .conn-bar.connected {
-    background: rgba(34,197,94,0.08);
-    border-color: rgba(34,197,94,0.25);
+    background: rgba(14,160,106,0.06);
+    border-color: rgba(14,160,106,0.2);
     color: var(--green);
   }
   .conn-bar.failed {
-    background: rgba(239,68,68,0.08);
-    border-color: rgba(239,68,68,0.25);
+    background: rgba(217,48,37,0.06);
+    border-color: rgba(217,48,37,0.2);
     color: var(--red);
   }
   .conn-dot {
-    width: 8px; height: 8px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
     background: currentColor;
@@ -104,82 +114,88 @@
   /* RESULT CARD */
   .result-card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
+    border-top: 3px solid var(--result-color, var(--green));
     border-radius: var(--radius);
-    padding: 28px;
+    padding: 16px 18px;
     margin-bottom: 20px;
     display: none;
-    animation: slideDown 0.4s cubic-bezier(0.34,1.56,0.64,1);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    box-shadow: var(--shadow-md);
+    transition: border-top-color 0.3s;
   }
-  .result-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--result-color, var(--green));
-    border-radius: var(--radius) var(--radius) 0 0;
+  .result-card.visible { display: block; animation: slideDown 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  .result-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
   }
-  .result-card.visible { display: block; }
-  .result-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-  .bmi-display { display: flex; align-items: baseline; gap: 8px; }
+  .result-top-left { flex: 0 0 auto; }
+  .bmi-display { display: flex; align-items: baseline; gap: 4px; }
   .bmi-number {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 800;
     line-height: 1;
     color: var(--result-color, var(--green));
-    text-shadow: 0 0 40px var(--result-color, var(--green));
-    transition: color 0.3s, text-shadow 0.3s;
+    transition: color 0.3s;
+    letter-spacing: -1px;
+    white-space: nowrap;
   }
-  .bmi-label { color: var(--muted); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
-  .result-badges { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .bmi-label { color: var(--muted); font-size: 10px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1.5px; font-family: 'DM Mono', monospace; }
+  .result-badges { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; }
   .badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
+    gap: 5px;
+    padding: 4px 10px;
     border-radius: 50px;
-    font-size: 13px;
-    font-weight: 600;
-    border: 1px solid;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1.5px solid;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
   }
-  .badge-category { background: rgba(255,255,255,0.05); border-color: var(--border); color: var(--text); }
-  .badge-pnp-ok { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(--green); }
-  .badge-pnp-no { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--red); }
-  .result-meta { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 24px; flex-wrap: wrap; }
-  .meta-item { font-size: 13px; color: var(--muted); }
-  .meta-item span { color: var(--text); font-weight: 500; }
+  .badge-category { background: var(--surface2); border-color: var(--border); color: var(--text); }
+  .badge-pnp-ok { background: rgba(14,160,106,0.08); border-color: rgba(14,160,106,0.25); color: var(--green); }
+  .badge-pnp-no { background: rgba(217,48,37,0.08); border-color: rgba(217,48,37,0.25); color: var(--red); }
+  .result-meta { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+  .meta-item { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .meta-item span { color: var(--text); font-weight: 700; }
   .export-btn {
-    margin-top: 16px;
-    background: rgba(79,142,247,0.1);
-    border: 1px solid rgba(79,142,247,0.25);
-    color: var(--accent);
-    padding: 8px 18px;
-    border-radius: 8px;
+    margin-top: 12px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 7px 14px;
+    border-radius: 10px;
     cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     transition: all 0.2s;
   }
-  .export-btn:hover { background: rgba(79,142,247,0.2); }
+  .export-btn:hover { background: var(--border); border-color: var(--border-strong); }
 
   /* FORM CARD */
   .card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: var(--radius);
     padding: 24px;
     margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
   }
   .card-title {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 18px;
+    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
   }
 
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
@@ -187,30 +203,31 @@
   @media(max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
 
   .field { display: flex; flex-direction: column; gap: 7px; position: relative; }
-  .field label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+  .field label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-family: 'DM Mono', monospace; }
   .field input, .field select {
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
     font-size: 15px;
-    padding: 11px 14px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    font-weight: 500;
+    padding: 12px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     outline: none;
     width: 100%;
   }
   .field input:focus, .field select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(79,142,247,0.1);
+    box-shadow: 0 0 0 3px rgba(68,97,242,0.1);
+    background: var(--surface);
   }
-  .field input.error { border-color: var(--red); }
   .field-hint { font-size: 11px; color: var(--muted); }
 
   /* HEIGHT INPUT ROW */
   .height-input-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: flex-end;
     margin-bottom: 14px;
   }
@@ -218,31 +235,31 @@
   .height-convert-btn {
     flex-shrink: 0;
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
     color: var(--accent);
-    font-size: 18px;
-    width: 44px;
-    height: 44px;
+    font-size: 16px;
+    width: 46px;
+    height: 46px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
     margin-bottom: 0;
-    title: "Height converter";
+    font-weight: 700;
   }
   .height-convert-btn:hover {
-    background: rgba(79,142,247,0.15);
-    border-color: rgba(79,142,247,0.4);
+    background: var(--accent-light);
+    border-color: rgba(68,97,242,0.3);
   }
 
   /* HEIGHT CONVERTER MODAL */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(4px);
+    background: rgba(10,14,40,0.5);
+    backdrop-filter: blur(6px);
     z-index: 1000;
     display: none;
     align-items: center;
@@ -252,57 +269,59 @@
   .modal-overlay.open { display: flex; }
   .modal {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: var(--radius);
     padding: 28px;
     width: 100%;
     max-width: 420px;
     animation: modalPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
     position: relative;
+    box-shadow: var(--shadow-md);
   }
   @keyframes modalPop {
     from { opacity: 0; transform: scale(0.92) translateY(10px); }
     to   { opacity: 1; transform: scale(1) translateY(0); }
   }
   .modal-title {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
   }
   .modal-close {
     position: absolute;
     top: 16px; right: 16px;
     background: var(--surface2);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     color: var(--muted);
-    width: 30px; height: 30px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     cursor: pointer;
     font-size: 14px;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
+    font-weight: 700;
   }
-  .modal-close:hover { color: var(--text); border-color: rgba(79,142,247,0.4); }
+  .modal-close:hover { color: var(--text); border-color: var(--border-strong); background: var(--border); }
   .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
   .modal-apply-btn {
     width: 100%;
-    background: linear-gradient(135deg, #3b6fd4, #4f8ef7);
+    background: var(--accent);
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
     font-size: 14px;
     font-weight: 700;
-    padding: 12px;
+    padding: 13px;
     cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    letter-spacing: 0.5px;
     transition: all 0.2s;
   }
-  .modal-apply-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,142,247,0.35); }
+  .modal-apply-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(68,97,242,0.35); background: #3450d4; }
 
   /* HISTORY */
   .history-card { display: none; }
@@ -310,93 +329,98 @@
   .history-list { display: flex; flex-direction: column; gap: 10px; }
   .history-item {
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
     animation: fadeIn 0.3s ease;
+    transition: border-color 0.2s;
   }
-  .history-bmi { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 600; }
-  .history-meta { font-size: 12px; color: var(--muted); }
+  .history-item:hover { border-color: var(--border-strong); }
+  .history-bmi { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+  .history-meta { font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 500; }
   .history-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-  .history-badge { font-size: 11px; padding: 3px 10px; border-radius: 50px; font-weight: 600; border: 1px solid; }
+  .history-badge { font-size: 11px; padding: 3px 10px; border-radius: 50px; font-weight: 700; border: 1.5px solid; font-family: 'DM Mono', monospace; }
 
   /* DROPDOWN */
   .dropdown { margin-bottom: 16px; }
   .dropdown-toggle {
     width: 100%;
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: var(--radius);
     color: var(--muted);
     padding: 14px 20px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     text-align: left;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
   }
-  .dropdown-toggle:hover { color: var(--text); border-color: rgba(79,142,247,0.3); }
-  .dropdown-arrow { transition: transform 0.3s; }
+  .dropdown-toggle:hover { color: var(--text); border-color: var(--border-strong); }
+  .dropdown-arrow { transition: transform 0.3s; font-size: 11px; }
   .dropdown-toggle.open .dropdown-arrow { transform: rotate(180deg); }
   .dropdown-content {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-top: none;
     border-radius: 0 0 var(--radius) var(--radius);
     padding: 20px;
     display: none;
+    box-shadow: var(--shadow-sm);
   }
   .dropdown-content.open { display: block; }
   .formula-box {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: var(--accent-light);
+    border: 1.5px solid var(--accent-mid);
+    border-radius: 12px;
     padding: 14px;
-    margin-bottom: 16px;
-    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 18px;
+    font-family: 'DM Mono', monospace;
     font-size: 14px;
     color: var(--accent);
     text-align: center;
+    font-weight: 500;
   }
-  .std-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
-  .std-table th { text-align: left; padding: 8px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
-  .std-table td { padding: 8px 12px; border-bottom: 1px solid rgba(42,45,58,0.5); }
+  .std-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 18px; }
+  .std-table th { text-align: left; padding: 8px 12px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1.5px solid var(--border); font-family: 'DM Mono', monospace; font-weight: 700; }
+  .std-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-weight: 500; color: var(--text); }
   .std-table tr:last-child td { border-bottom: none; }
-  .color-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+  .std-table tbody tr:hover { background: var(--surface2); }
+  .color-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; }
 
   /* CALCULATE BTN */
   .calc-btn {
     width: 100%;
-    background: linear-gradient(135deg, #3b6fd4, #4f8ef7);
+    background: var(--accent);
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
     font-weight: 700;
     padding: 16px;
     cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    letter-spacing: 0.5px;
     transition: all 0.2s;
-    box-shadow: 0 4px 20px rgba(79,142,247,0.25);
+    box-shadow: 0 4px 18px rgba(68,97,242,0.3);
     margin-top: 8px;
   }
-  .calc-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(79,142,247,0.4); }
+  .calc-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(68,97,242,0.4); background: #3450d4; }
   .calc-btn:active { transform: translateY(0); }
 
   /* SAVE STATUS */
-  .save-status { text-align: center; font-size: 12px; margin-top: 8px; height: 18px; transition: all 0.3s; }
+  .save-status { text-align: center; font-size: 12px; margin-top: 8px; height: 18px; transition: all 0.3s; font-weight: 600; }
   .save-status.saving { color: var(--muted); }
   .save-status.saved { color: var(--green); }
   .save-status.error { color: var(--red); }
@@ -412,7 +436,7 @@
   }
 
   /* LOADING SPINNER */
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(107,112,128,0.3); border-top-color: var(--muted); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(136,144,168,0.25); border-top-color: var(--muted); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   
   @keyframes shake {
@@ -426,41 +450,41 @@
 
 /* ── KG TO LOSE BANNER ─────────────────────────────────── */
 .kg-lose-banner {
-  margin-top: 14px;
-  padding: 12px 16px;
-  border-radius: 10px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
   display: none;
   align-items: center;
   gap: 10px;
-  border: 1px solid;
+  border: 1.5px solid;
   animation: fadeIn 0.4s ease;
 }
 .kg-lose-banner.visible { display: flex; }
 .kg-lose-banner.overweight {
-  background: rgba(234,179,8,0.08);
-  border-color: rgba(234,179,8,0.3);
+  background: rgba(217,123,6,0.07);
+  border-color: rgba(217,123,6,0.2);
   color: var(--yellow);
 }
 .kg-lose-banner.obese {
-  background: rgba(239,68,68,0.08);
-  border-color: rgba(239,68,68,0.3);
+  background: rgba(217,48,37,0.07);
+  border-color: rgba(217,48,37,0.2);
   color: var(--red);
 }
 .kg-lose-banner.underweight {
-  background: rgba(96,165,250,0.08);
-  border-color: rgba(96,165,250,0.3);
-  color: #60a5fa;
+  background: rgba(68,97,242,0.07);
+  border-color: rgba(68,97,242,0.2);
+  color: var(--accent);
 }
 .kg-lose-banner.normal {
-  background: rgba(34,197,94,0.08);
-  border-color: rgba(34,197,94,0.3);
+  background: rgba(14,160,106,0.07);
+  border-color: rgba(14,160,106,0.2);
   color: var(--green);
 }
-.kg-lose-icon { font-size: 18px; flex-shrink: 0; }
-.kg-lose-text { line-height: 1.5; }
-.kg-lose-value { font-family: 'JetBrains Mono', monospace; font-size: 1.1em; }
+.kg-lose-icon { font-size: 15px; flex-shrink: 0; }
+.kg-lose-text { line-height: 1.5; font-size: 12px; }
+.kg-lose-value { font-family: 'Nunito Sans', sans-serif; font-size: 1em; font-weight: 800; }
 
 /* ── HELP TOOLTIP ───────────────────────────────────────── */
 .field-header { display: flex; align-items: center; gap: 6px; }
@@ -470,32 +494,32 @@
   justify-content: center;
   width: 16px; height: 16px;
   border-radius: 50%;
-  background: rgba(107,112,128,0.2);
-  border: 1px solid rgba(107,112,128,0.35);
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
   color: var(--muted);
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 9px;
+  font-weight: 800;
   cursor: pointer;
   position: relative;
   flex-shrink: 0;
   transition: all 0.2s;
   line-height: 1;
+  font-family: 'DM Mono', monospace;
 }
-.help-btn:hover { background: rgba(79,142,247,0.2); border-color: rgba(79,142,247,0.5); color: var(--accent); }
+.help-btn:hover { background: var(--accent-light); border-color: rgba(68,97,242,0.4); color: var(--accent); }
 .tooltip {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: #1e2029;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: var(--text);
+  border: none;
+  border-radius: 10px;
   padding: 10px 13px;
   font-size: 12px;
-  font-weight: 400;
-  color: var(--text);
-  white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  font-weight: 500;
+  color: #f0f2f8;
+  box-shadow: 0 8px 24px rgba(10,14,40,0.2);
   pointer-events: none;
   opacity: 0;
   transform: translateX(-50%) translateY(4px);
@@ -507,6 +531,7 @@
   max-width: 220px;
   white-space: normal;
   text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
 }
 .tooltip::after {
   content: '';
@@ -515,7 +540,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--border);
+  border-top-color: var(--text);
 }
 .help-btn:hover .tooltip,
 .help-btn:focus .tooltip {
@@ -530,9 +555,9 @@
   top: calc(100% + 4px);
   left: 0; right: 0;
   background: var(--surface);
-  border: 1px solid rgba(79,142,247,0.35);
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
   z-index: 500;
   overflow: hidden;
   display: none;
@@ -540,29 +565,31 @@
 }
 .autocomplete-list.visible { display: block; }
 .autocomplete-item {
-  padding: 10px 14px;
+  padding: 11px 14px;
   font-size: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
   transition: background 0.15s;
-  border-bottom: 1px solid rgba(42,45,58,0.5);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
 }
 .autocomplete-item:last-child { border-bottom: none; }
-.autocomplete-item:hover, .autocomplete-item.active { background: rgba(79,142,247,0.1); }
+.autocomplete-item:hover, .autocomplete-item.active { background: var(--accent-light); }
 .autocomplete-item-icon { font-size: 14px; color: var(--muted); }
-.autocomplete-item-name { font-weight: 600; color: var(--text); }
+.autocomplete-item-name { font-weight: 700; color: var(--text); }
 .autocomplete-item-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
 .autocomplete-header {
   padding: 7px 14px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
-  background: rgba(0,0,0,0.15);
+  background: var(--surface2);
   border-bottom: 1px solid var(--border);
+  font-family: 'DM Mono', monospace;
 }
 
 /* ── SEARCH HELP TEXT ───────────────────────────────────── */
@@ -573,31 +600,109 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  font-weight: 500;
 }
 .name-hint .hint-icon { font-size: 10px; }
 
-/* ── HELP PANEL ─────────────────────────────────────────── */
-.help-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-  margin-bottom: 16px;
+/* ── HELP MODAL ─────────────────────────────────────────── */
+.help-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,14,40,0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2000;
   display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
-.help-panel.visible { display: block; }
-.help-section { margin-bottom: 18px; }
+.help-modal-overlay.open {
+  display: flex;
+  opacity: 1;
+}
+.help-modal-overlay.closing {
+  opacity: 0;
+}
+.help-modal {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(10,14,40,0.18), 0 4px 16px rgba(10,14,40,0.1);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
+  opacity: 0;
+}
+.help-modal-overlay.open .help-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+.help-modal-overlay.closing .help-modal {
+  transform: translateY(12px) scale(0.97);
+  opacity: 0;
+}
+
+/* Scrollbar styling */
+.help-modal::-webkit-scrollbar { width: 4px; }
+.help-modal::-webkit-scrollbar-track { background: transparent; }
+.help-modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.help-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+  border-radius: 20px 20px 0 0;
+}
+.help-modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.help-modal-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.help-modal-close:hover { background: var(--border); color: var(--text); border-color: var(--border-strong); }
+.help-modal-body {
+  padding: 20px 24px 24px;
+}
+.help-section { margin-bottom: 22px; }
 .help-section:last-child { margin-bottom: 0; }
 .help-section-title {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: 'DM Mono', monospace;
 }
 .help-step {
   display: flex;
@@ -606,30 +711,39 @@
   font-size: 13px;
   color: var(--text);
   line-height: 1.6;
+  font-weight: 500;
 }
+.help-step:last-child { margin-bottom: 0; }
 .help-step-num {
   width: 22px; height: 22px;
   border-radius: 50%;
-  background: rgba(79,142,247,0.15);
-  border: 1px solid rgba(79,142,247,0.3);
+  background: var(--accent-light);
+  border: 1.5px solid var(--accent-mid);
   color: var(--accent);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   margin-top: 1px;
+  font-family: 'DM Mono', monospace;
 }
 .help-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(79,142,247,0.1);
-  border: 1px solid rgba(79,142,247,0.2);
+  background: var(--accent-light);
+  border: 1.5px solid var(--accent-mid);
   color: var(--accent);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 2px 8px;
   border-radius: 50px;
+}
+.help-divider {
+  height: 1.5px;
+  background: var(--border);
+  margin: 18px 0;
+  border: none;
 }
 
 /* Help toggle button */
@@ -637,71 +751,86 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(107,112,128,0.1);
-  border: 1px solid rgba(107,112,128,0.25);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
   color: var(--muted);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
+  font-weight: 700;
+  padding: 5px 12px;
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
 }
-.help-toggle-btn:hover { color: var(--text); border-color: rgba(79,142,247,0.4); background: rgba(79,142,247,0.08); }
+.help-toggle-btn:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface2); }
 
 .field input.error {
   border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+  box-shadow: 0 0 0 3px rgba(217,48,37,0.12);
   animation: shake 0.35s ease;
 }
 
-/* ── LIGHT THEME ─────────────────────────────────────────── */
-[data-theme="light"] {
-  --bg: #f0f2f7;
-  --surface: #ffffff;
-  --surface2: #e8eaf0;
-  --border: #d0d4e0;
-  --text: #1a1d2e;
-  --muted: #6b7080;
-  --accent: #3b6fd4;
-  --green: #16a34a;
-  --yellow: #ca8a04;
-  --orange: #ea580c;
-  --red: #dc2626;
-  --red2: #991b1b;
+/* ── LIGHT THEME (default, no data-theme needed) ─────────── */
+
+/* ── DARK THEME ───────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg: #0d0f18;
+  --surface: #151823;
+  --surface2: #1c1f2e;
+  --border: #252840;
+  --border-strong: #353860;
+  --text: #e8eaf5;
+  --muted: #6b7090;
+  --accent: #5a78f5;
+  --accent-light: rgba(90,120,245,0.1);
+  --accent-mid: rgba(90,120,245,0.2);
+  --green: #1dbf7a;
+  --yellow: #e8950d;
+  --orange: #f06b28;
+  --red: #f03535;
+  --red2: #b81c1c;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
 }
 
-[data-theme="light"] body {
-  background-image: radial-gradient(ellipse at 20% 0%, #dde3f5 0%, transparent 60%),
-                    radial-gradient(ellipse at 80% 100%, #ede8f5 0%, transparent 60%);
+[data-theme="dark"] body {
+  background-image: radial-gradient(ellipse at 15% 0%, rgba(68,97,242,0.08) 0%, transparent 55%),
+                    radial-gradient(ellipse at 85% 100%, rgba(90,50,140,0.06) 0%, transparent 55%);
+}
+
+[data-theme="dark"] .help-modal {
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .tooltip {
+  background: #e8eaf5;
+  color: #151823;
+}
+[data-theme="dark"] .tooltip::after {
+  border-top-color: #e8eaf5;
 }
 
 /* ── THEME TOGGLE BUTTON ─────────────────────────────────── */
 .theme-toggle {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 10;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 50px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--muted);
   display: flex;
   align-items: center;
   gap: 5px;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: var(--shadow-sm);
 }
 .theme-toggle:hover {
   color: var(--text);
-  border-color: rgba(79,142,247,0.4);
+  border-color: var(--border-strong);
 }
 .theme-toggle .theme-icon { font-size: 12px; }
 	
@@ -711,14 +840,16 @@
   <div class="container">
     <!-- HEADER -->
     <div class="header">
-      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-        <span class="theme-icon">🌙</span>
-        <span id="themeLabel">Dark</span>
-      </button>
       <h1>BMI Calculator</h1>
       <p>Body Mass Index Assessment with PNP Standards</p>
+      <div class="header-actions">
+        <button class="help-toggle-btn" onclick="toggleHelp()" id="helpToggleBtn">❓ Help</button>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+          <span class="theme-icon">🌙</span>
+          <span id="themeLabel">Dark</span>
+        </button>
+      </div>
     </div>
-  </div>
 
   <!-- CONNECTION STATUS BAR -->
   <div class="conn-bar checking" id="connBar">
@@ -729,7 +860,7 @@
   <!-- RESULT CARD -->
   <div class="result-card" id="resultCard">
     <div class="result-top">
-      <div>
+      <div class="result-top-left">
         <div class="bmi-label">BMI Score</div>
         <div class="bmi-display">
           <div class="bmi-number" id="bmiNumber">—</div>
@@ -756,31 +887,47 @@
     <div class="save-status" id="saveStatus"></div>
   </div>
 
-  <!-- HELP TOGGLE -->
-  <button class="help-toggle-btn" onclick="toggleHelp()" id="helpToggleBtn">❓ How to use this app</button>
-
   <!-- HELP PANEL -->
-  <div class="help-panel" id="helpPanel">
-    <div class="help-section">
-      <div class="help-section-title">🚀 Quick Start Guide</div>
-      <div class="help-step"><div class="help-step-num">1</div><div>Type your <strong>Full Name</strong> — the app will automatically search for your past BMI history from Google Sheets as you type (after 2+ characters).</div></div>
-      <div class="help-step"><div class="help-step-num">2</div><div>Enter your <strong>Age</strong>, <strong>Weight</strong> (in kg), and <strong>Height</strong> (in meters). Use the <span class="help-chip">⇅ converter</span> button if you know your height in feet/inches or centimeters.</div></div>
-      <div class="help-step"><div class="help-step-num">3</div><div>Click <span class="help-chip">Calculate BMI</span> to get your result. It will also show how many <strong>kg you need to lose</strong> (or gain) to reach a healthy BMI.</div></div>
-      <div class="help-step"><div class="help-step-num">4</div><div>Your result is <strong>automatically saved</strong> to Google Sheets (cloud). You can also <span class="help-chip">⬇ Export to .txt</span> for a printable record.</div></div>
-    </div>
-    <div class="help-section">
-      <div class="help-section-title">🔍 Name Search & History</div>
-      <div class="help-step"><div class="help-step-num">→</div><div>Start typing your name in the <strong>Full Name</strong> field. After 2 characters, the app will automatically search Google Sheets for your past records.</div></div>
-      <div class="help-step"><div class="help-step-num">→</div><div>If you've been assessed before, a <strong>history panel</strong> will appear below the form showing all your previous BMI scores, sorted newest first.</div></div>
-      <div class="help-step"><div class="help-step-num">→</div><div>History fetching requires the Google Sheets connection to be <span class="help-chip" style="color:var(--green);border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.1)">✅ Connected</span>.</div></div>
-    </div>
-    <div class="help-section">
-      <div class="help-section-title">📏 Height Entry Tips</div>
-      <div class="help-step"><div class="help-step-num">→</div><div>Height must be in <strong>meters</strong> (e.g., 1.75 for 5'9"). Click the <span class="help-chip">⇅</span> button to open the height converter — enter feet & inches or centimeters and click Apply.</div></div>
-    </div>
-    <div class="help-section">
-      <div class="help-section-title">⚖️ About PNP Standards</div>
-      <div class="help-step"><div class="help-step-num">→</div><div>PNP uses age-adjusted BMI cutoffs. The acceptable upper limit increases with age (24.9 for ages 18–24, up to 28.9 for ages 40+). See the standards table below.</div></div>
+  <div class="help-modal-overlay" id="helpModal" onclick="handleHelpOverlayClick(event)">
+    <div class="help-modal" id="helpModalBox">
+      <div class="help-modal-header">
+        <div class="help-modal-title">📖 How to use this app</div>
+        <button class="help-modal-close" onclick="closeHelp()">✕</button>
+      </div>
+      <div class="help-modal-body">
+
+        <div class="help-section">
+          <div class="help-section-title">🚀 Quick Start Guide</div>
+          <div class="help-step"><div class="help-step-num">1</div><div>Type your <strong>Full Name</strong> — the app will automatically search for your past BMI history from Google Sheets as you type (after 2+ characters).</div></div>
+          <div class="help-step"><div class="help-step-num">2</div><div>Enter your <strong>Age</strong>, <strong>Weight</strong> (in kg), and <strong>Height</strong> (in meters). Use the <span class="help-chip">⇅ converter</span> button if you know your height in feet/inches or centimeters.</div></div>
+          <div class="help-step"><div class="help-step-num">3</div><div>Click <span class="help-chip">Calculate BMI</span> to get your result. It also shows how many <strong>kg to lose or gain</strong> to reach a healthy BMI.</div></div>
+          <div class="help-step"><div class="help-step-num">4</div><div>Your result is <strong>automatically saved</strong> to Google Sheets (cloud). You can also <span class="help-chip">⬇ Export to .txt</span> for a printable record.</div></div>
+        </div>
+
+        <hr class="help-divider">
+
+        <div class="help-section">
+          <div class="help-section-title">🔍 Name Search & History</div>
+          <div class="help-step"><div class="help-step-num">→</div><div>Start typing your name in the <strong>Full Name</strong> field. After 2 characters, the app auto-searches Google Sheets for your past records.</div></div>
+          <div class="help-step"><div class="help-step-num">→</div><div>If you've been assessed before, a <strong>history panel</strong> will appear below the form showing all previous BMI scores, sorted newest first.</div></div>
+          <div class="help-step"><div class="help-step-num">→</div><div>History fetching requires the connection to be <span class="help-chip" style="color:var(--green);border-color:rgba(14,160,106,0.25);background:rgba(14,160,106,0.08)">✅ Connected</span>.</div></div>
+        </div>
+
+        <hr class="help-divider">
+
+        <div class="help-section">
+          <div class="help-section-title">📏 Height Entry Tips</div>
+          <div class="help-step"><div class="help-step-num">→</div><div>Height must be in <strong>meters</strong> (e.g., 1.75 for 5'9"). Click the <span class="help-chip">⇅</span> button to open the height converter — enter feet & inches or centimeters and click Apply.</div></div>
+        </div>
+
+        <hr class="help-divider">
+
+        <div class="help-section">
+          <div class="help-section-title">⚖️ About PNP Standards</div>
+          <div class="help-step"><div class="help-step-num">→</div><div>PNP uses <strong>age-adjusted BMI cutoffs</strong>. The acceptable upper limit increases with age — 24.9 for ages 18–24, up to 28.9 for ages 40+. See the standards table in the app for the full chart.</div></div>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -832,7 +979,7 @@ oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete=
   </div>
 
   <!-- CREATOR -->
-<p style="font-family:'DM Sans',serif;font-size:13px;color:#6b7080;text-align:center;margin-top:24px;letter-spacing:1.5px;font-style:italic;">(App by <a href="https://m.me/rekzbanz" target="_blank" style="font-weight:bold;color:#7790bb;font-style:normal;letter-spacing:2px;text-decoration:none;">RekzBanz</a>)</p>
+<p style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--muted);text-align:center;margin-top:28px;letter-spacing:0.5px;font-weight:600;">(App by <a href="https://m.me/rekzbanz" target="_blank" style="font-weight:800;color:var(--accent);letter-spacing:0;text-decoration:none;">RekzBanz</a>)</p>
 <br>
   <!-- HISTORY -->
   <div class="card history-card" id="historyCard">
@@ -855,12 +1002,12 @@ oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete=
       <table class="std-table">
         <thead><tr><th>BMI Range</th><th>Category</th></tr></thead>
         <tbody>
-          <tr><td><span class="color-dot" style="background:#60a5fa"></span>&lt; 18.5</td><td>Underweight</td></tr>
-          <tr><td><span class="color-dot" style="background:#22c55e"></span>18.5 – 24.9</td><td>Normal</td></tr>
-          <tr><td><span class="color-dot" style="background:#eab308"></span>25.0 – 29.9</td><td>Overweight</td></tr>
-          <tr><td><span class="color-dot" style="background:#f97316"></span>30.0 – 34.9</td><td>Obese Class I</td></tr>
-          <tr><td><span class="color-dot" style="background:#ef4444"></span>35.0 – 39.9</td><td>Obese Class II</td></tr>
-          <tr><td><span class="color-dot" style="background:#b91c1c"></span>≥ 40.0</td><td>Obese Class III</td></tr>
+          <tr><td><span class="color-dot" style="background:#3b82f6"></span>&lt; 18.5</td><td>Underweight</td></tr>
+          <tr><td><span class="color-dot" style="background:#0ea06a"></span>18.5 – 24.9</td><td>Normal</td></tr>
+          <tr><td><span class="color-dot" style="background:#d97b06"></span>25.0 – 29.9</td><td>Overweight</td></tr>
+          <tr><td><span class="color-dot" style="background:#e05c1a"></span>30.0 – 34.9</td><td>Obese Class I</td></tr>
+          <tr><td><span class="color-dot" style="background:#d93025"></span>35.0 – 39.9</td><td>Obese Class II</td></tr>
+          <tr><td><span class="color-dot" style="background:#a81c14"></span>≥ 40.0</td><td>Obese Class III</td></tr>
         </tbody>
       </table>
       <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">PNP Acceptable BMI by Age</div>
@@ -931,7 +1078,7 @@ oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete=
         JSON.parse(txt); // will throw if not JSON
         isConnected = true;
         bar.className  = 'conn-bar connected';
-        text.textContent = '✅ Google Sheets connected — cloud save & history are active';
+        text.textContent = '✅ Connected to cloud';
       } else {
         throw new Error('non-200');
       }
@@ -975,11 +1122,6 @@ oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete=
   function handleOverlayClick(e) {
     if (e.target === document.getElementById('converterModal')) closeConverter();
   }
-
-  // Close modal on Escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeConverter();
-  });
 
   function convFrom(source) {
     const mEl  = document.getElementById('convM');
@@ -1056,14 +1198,14 @@ oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete=
 
   function getCategoryColor(category) {
     const map = {
-      'Underweight':    '#60a5fa',
-      'Normal':         '#22c55e',
-      'Overweight':     '#eab308',
-      'Obese Class I':  '#f97316',
-      'Obese Class II': '#ef4444',
-      'Obese Class III':'#b91c1c'
+      'Underweight':    '#3b82f6',
+      'Normal':         '#0ea06a',
+      'Overweight':     '#d97b06',
+      'Obese Class I':  '#e05c1a',
+      'Obese Class II': '#d93025',
+      'Obese Class III':'#a81c14'
     };
-    return map[category] || '#6b7080';
+    return map[category] || '#8890a8';
   }
 
   // ── FORMAT CALCULATE ─────────────────────────────────────────────────
@@ -1150,7 +1292,7 @@ if (!name) {
       kgDiff = +(weight - targetWeight).toFixed(1);
       kgBanner.className = 'kg-lose-banner visible ' + (bmi >= 30 ? 'obese' : 'overweight');
       kgIcon.textContent = '🔻';
-      kgText.innerHTML = `Need to lose <span class="kg-lose-value">${kgDiff} kg</span> to reach a Normal BMI (24.9). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)} kg</span>.`;
+      kgText.innerHTML = `Need to lose <span class="kg-lose-value">${kgDiff}</span> kg to reach a Normal BMI (24.9). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)}</span> kg.`;
     } else if (bmi < 18.5) {
       // Underweight — need to gain
       const targetWeight = 18.5 * height * height;
@@ -1158,7 +1300,7 @@ if (!name) {
       kgBanner.className = 'kg-lose-banner visible underweight';
       kgIcon.textContent = '🔺';
       const gainAmt = Math.abs(kgDiff);
-      kgText.innerHTML = `Need to gain <span class="kg-lose-value">${gainAmt} kg</span> to reach a Normal BMI (18.5). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)} kg</span>.`;
+      kgText.innerHTML = `Need to gain <span class="kg-lose-value">${gainAmt}</span> kg to reach a Normal BMI (18.5). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)}</span> kg.`;
     } else {
       kgBanner.className = 'kg-lose-banner visible normal';
       kgIcon.textContent = '✅';
@@ -1183,7 +1325,6 @@ if (!name) {
 
     document.getElementById('bmiNumber').textContent = bmiFixed;
     document.getElementById('bmiNumber').style.color = color;
-    document.getElementById('bmiNumber').style.textShadow = `0 0 40px ${color}`;
     document.getElementById('categoryBadge').textContent = category;
 
     const pnpBadge = document.getElementById('pnpBadge');
@@ -1251,12 +1392,48 @@ if (!name) {
 }
 
   // ── HELP PANEL TOGGLE ─────────────────────────────────────────
+  // ── HELP MODAL ─────────────────────────────────────────────────
   function toggleHelp() {
-    const panel = document.getElementById('helpPanel');
-    const btn   = document.getElementById('helpToggleBtn');
-    panel.classList.toggle('visible');
-    btn.textContent = panel.classList.contains('visible') ? '✕ Close Help' : '❓ How to use this app';
+    const overlay = document.getElementById('helpModal');
+    if (overlay.classList.contains('open')) {
+      closeHelp();
+    } else {
+      openHelp();
+    }
   }
+
+  function openHelp() {
+    const overlay = document.getElementById('helpModal');
+    overlay.style.display = 'flex';
+    // Force reflow then add open class for animation
+    overlay.offsetHeight;
+    overlay.classList.add('open');
+    overlay.classList.remove('closing');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeHelp() {
+    const overlay = document.getElementById('helpModal');
+    overlay.classList.add('closing');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      overlay.classList.remove('closing');
+    }, 280);
+  }
+
+  function handleHelpOverlayClick(e) {
+    if (e.target === document.getElementById('helpModal')) closeHelp();
+  }
+
+  // Close help modal on Escape key (in addition to converter modal)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeHelp();
+      closeConverter();
+    }
+  });
 
   // ── AUTOCOMPLETE ──────────────────────────────────────────────
   let nameCache = []; // {name, lastDate, lastBmi, lastCategory}
@@ -1402,8 +1579,8 @@ if (!name) {
             '<div class="history-meta">' + parseSheetDate(r.date) + ' · ' + (r.weight || '—') + ' kg · ' + (r.height || '—') + ' m' + kgLoseStr + '</div>' +
           '</div>' +
           '<div class="history-badges">' +
-            '<span class="history-badge" style="color:' + color + ';border-color:' + color + '40;background:' + color + '15">' + (r.category || '—') + '</span>' +
-            '<span class="history-badge" style="' + (pnpOk ? 'color:#22c55e;border-color:#22c55e40;background:#22c55e15' : 'color:#ef4444;border-color:#ef444440;background:#ef444415') + '">' + (pnpOk ? '✅ OK' : '❌ Fail') + '</span>' +
+            '<span class="history-badge" style="color:' + color + ';border-color:' + color + ';opacity:0.9;background:' + color + '1a">' + (r.category || '—') + '</span>' +
+            '<span class="history-badge" style="' + (pnpOk ? 'color:#0ea06a;border-color:rgba(14,160,106,0.35);background:rgba(14,160,106,0.1)' : 'color:#d93025;border-color:rgba(217,48,37,0.35);background:rgba(217,48,37,0.1)') + '">' + (pnpOk ? '✅ OK' : '❌ Fail') + '</span>' +
           '</div>';
         list.appendChild(div);
       });
@@ -1458,7 +1635,11 @@ if (!name) {
 })();
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
   const btn   = document.getElementById('themeBtn');
   const label = document.getElementById('themeLabel');
   if (!btn) return;
@@ -1472,7 +1653,8 @@ function applyTheme(theme) {
 }
 
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const current = document.documentElement.getAttribute('data-theme');
+  // No attribute = light (default). 'dark' = dark.
   const next = current === 'dark' ? 'light' : 'dark';
   localStorage.setItem('bmi-theme', next);
   applyTheme(next);
