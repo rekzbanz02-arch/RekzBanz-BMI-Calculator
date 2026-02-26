@@ -455,7 +455,7 @@
 .theme-toggle {
   position: absolute;
   top: 0;
-  right: 0;
+  right: calc(50% - 340px);
   z-index: 10;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -481,15 +481,16 @@
 </style>
 </head>
 <body>
-  <!-- HEADER -->
-  <!-- HEADER -->
-  <div class="header">
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-      <span class="theme-icon">🌙</span>
-      <span id="themeLabel">Dark</span>
-    </button>
-    <h1>BMI Calculator</h1>
-    <p>Body Mass Index Assessment with PNP Standards</p>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+        <span class="theme-icon">🌙</span>
+        <span id="themeLabel">Dark</span>
+      </button>
+      <h1>BMI Calculator</h1>
+      <p>Body Mass Index Assessment with PNP Standards</p>
+    </div>
   </div>
 
   <!-- CONNECTION STATUS BAR -->
