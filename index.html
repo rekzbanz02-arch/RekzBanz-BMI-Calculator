@@ -38,7 +38,7 @@
   .container { max-width: 680px; margin: 0 auto; }
 
   /* HEADER */
-  .header { text-align: center; margin-bottom: 32px; }
+.header { text-align: center; margin-bottom: 32px; position: relative; }
   .header-badge {
     display: inline-block;
     background: rgba(79,142,247,0.12);
@@ -453,10 +453,10 @@
 
 /* ── THEME TOGGLE BUTTON ─────────────────────────────────── */
 .theme-toggle {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 999;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 50px;
@@ -482,17 +482,15 @@
 </head>
 <body>
   <!-- HEADER -->
+  <!-- HEADER -->
   <div class="header">
-  <!--   <div class="header-badge">Philippine National Police</div> -->
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="theme-icon">🌙</span>
+      <span id="themeLabel">Dark</span>
+    </button>
     <h1>BMI Calculator</h1>
     <p>Body Mass Index Assessment with PNP Standards</p>
   </div>
-<!-- Theme Toggle -->
-<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-  <span class="theme-icon">🌙</span>
-  <span id="themeLabel">Dark</span>
-</button>
-<div class="container">
 
   <!-- CONNECTION STATUS BAR -->
   <div class="conn-bar checking" id="connBar">
