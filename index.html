@@ -448,43 +448,7 @@
   100% { transform: translateX(0); }
 }
 
-/* ── KG TO LOSE BANNER ─────────────────────────────────── */
-.kg-lose-banner {
-  margin-top: 12px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  display: none;
-  align-items: center;
-  gap: 10px;
-  border: 1.5px solid;
-  animation: fadeIn 0.4s ease;
-}
-.kg-lose-banner.visible { display: flex; }
-.kg-lose-banner.overweight {
-  background: rgba(217,123,6,0.07);
-  border-color: rgba(217,123,6,0.2);
-  color: var(--yellow);
-}
-.kg-lose-banner.obese {
-  background: rgba(217,48,37,0.07);
-  border-color: rgba(217,48,37,0.2);
-  color: var(--red);
-}
-.kg-lose-banner.underweight {
-  background: rgba(68,97,242,0.07);
-  border-color: rgba(68,97,242,0.2);
-  color: var(--accent);
-}
-.kg-lose-banner.normal {
-  background: rgba(14,160,106,0.07);
-  border-color: rgba(14,160,106,0.2);
-  color: var(--green);
-}
-.kg-lose-icon { font-size: 15px; flex-shrink: 0; }
-.kg-lose-text { line-height: 1.5; font-size: 12px; }
-.kg-lose-value { font-family: 'Nunito Sans', sans-serif; font-size: 1em; font-weight: 800; }
+
 
 /* ── HELP TOOLTIP ───────────────────────────────────────── */
 .field-header { display: flex; align-items: center; gap: 6px; }
@@ -548,49 +512,7 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* ── AUTOCOMPLETE DROPDOWN ──────────────────────────────── */
-.name-wrapper { position: relative; }
-.autocomplete-list {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0; right: 0;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
-  z-index: 500;
-  overflow: hidden;
-  display: none;
-  animation: fadeIn 0.15s ease;
-}
-.autocomplete-list.visible { display: block; }
-.autocomplete-item {
-  padding: 11px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background 0.15s;
-  border-bottom: 1px solid var(--border);
-  font-weight: 500;
-}
-.autocomplete-item:last-child { border-bottom: none; }
-.autocomplete-item:hover, .autocomplete-item.active { background: var(--accent-light); }
-.autocomplete-item-icon { font-size: 14px; color: var(--muted); }
-.autocomplete-item-name { font-weight: 700; color: var(--text); }
-.autocomplete-item-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.autocomplete-header {
-  padding: 7px 14px;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  font-family: 'DM Mono', monospace;
-}
+
 
 /* ── SEARCH HELP TEXT ───────────────────────────────────── */
 .name-hint {
@@ -878,11 +800,6 @@
       <div class="meta-item">Height: <span id="rHeight">—</span></div>
       <div class="meta-item">Date: <span id="rDate">—</span></div>
     </div>
-    <!-- KG TO LOSE BANNER -->
-    <div class="kg-lose-banner" id="kgLoseBanner">
-      <span class="kg-lose-icon" id="kgLoseIcon">⚖️</span>
-      <span class="kg-lose-text" id="kgLoseText"></span>
-    </div>
     <button class="export-btn" onclick="exportTxt()">⬇ Export to .txt</button>
     <div class="save-status" id="saveStatus"></div>
   </div>
@@ -943,7 +860,6 @@
         <div class="name-wrapper">
           <input type="text" id="name" placeholder="e.g. Juan dela Cruz" 
 oninput="onNameInput(this.value)" onkeydown="onNameKeydown(event)" autocomplete="off" required>
-          <div class="autocomplete-list" id="autocompleteList"></div>
         </div>
         <div class="name-hint"><span class="hint-icon">🔍</span> Type 2+ characters to auto-search history</div>
       </div>
@@ -1282,30 +1198,15 @@ if (!name) {
 
     // ── KG TO LOSE / GAIN CALCULATION ──────────────────────────
     let kgDiff = 0;
-    let kgBanner = document.getElementById('kgLoseBanner');
-    let kgText   = document.getElementById('kgLoseText');
-    let kgIcon   = document.getElementById('kgLoseIcon');
 
     if (bmi > 24.9) {
-      // Need to lose weight — target BMI 24.9 (upper edge of Normal)
       const targetWeight = 24.9 * height * height;
       kgDiff = +(weight - targetWeight).toFixed(1);
-      kgBanner.className = 'kg-lose-banner visible ' + (bmi >= 30 ? 'obese' : 'overweight');
-      kgIcon.textContent = '🔻';
-      kgText.innerHTML = `Need to lose <span class="kg-lose-value">${kgDiff}</span> kg to reach a Normal BMI (24.9). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)}</span> kg.`;
     } else if (bmi < 18.5) {
-      // Underweight — need to gain
       const targetWeight = 18.5 * height * height;
       kgDiff = -(+(targetWeight - weight).toFixed(1));
-      kgBanner.className = 'kg-lose-banner visible underweight';
-      kgIcon.textContent = '🔺';
-      const gainAmt = Math.abs(kgDiff);
-      kgText.innerHTML = `Need to gain <span class="kg-lose-value">${gainAmt}</span> kg to reach a Normal BMI (18.5). Target weight: <span class="kg-lose-value">${targetWeight.toFixed(1)}</span> kg.`;
     } else {
-      kgBanner.className = 'kg-lose-banner visible normal';
-      kgIcon.textContent = '✅';
       kgDiff = 0;
-      kgText.innerHTML = `You are within the <span class="kg-lose-value">Normal BMI range</span>. No weight adjustment needed!`;
     }
 
     // Also check vs PNP limit
@@ -1437,65 +1338,10 @@ if (!name) {
 
   // ── AUTOCOMPLETE ──────────────────────────────────────────────
   let nameCache = []; // {name, lastDate, lastBmi, lastCategory}
-  let autocompleteActive = -1;
 
   function onNameKeydown(e) {
-    const list = document.getElementById('autocompleteList');
-    const items = list.querySelectorAll('.autocomplete-item');
-    if (!list.classList.contains('visible') || items.length === 0) return;
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      autocompleteActive = Math.min(autocompleteActive + 1, items.length - 1);
-      updateActiveItem(items);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      autocompleteActive = Math.max(autocompleteActive - 1, 0);
-      updateActiveItem(items);
-    } else if (e.key === 'Enter' && autocompleteActive >= 0) {
-      e.preventDefault();
-      items[autocompleteActive].click();
-    } else if (e.key === 'Escape') {
-      hideAutocomplete();
-    }
+    // autocomplete removed
   }
-
-  function updateActiveItem(items) {
-    items.forEach((item, i) => {
-      item.classList.toggle('active', i === autocompleteActive);
-    });
-  }
-
-  function hideAutocomplete() {
-    document.getElementById('autocompleteList').classList.remove('visible');
-    autocompleteActive = -1;
-  }
-
-  function showAutocomplete(matches) {
-    const list = document.getElementById('autocompleteList');
-    if (!matches || matches.length === 0) { hideAutocomplete(); return; }
-    list.innerHTML = '<div class="autocomplete-header">📋 Past records found</div>';
-    matches.slice(0, 5).forEach(function(m, idx) {
-      const item = document.createElement('div');
-      item.className = 'autocomplete-item';
-      item.innerHTML =
-        '<span class="autocomplete-item-icon">👤</span>' +
-        '<div><div class="autocomplete-item-name">' + m.name + '</div>' +
-        '<div class="autocomplete-item-meta">' + (m.lastDate || '') + (m.lastBmi ? ' · BMI ' + m.lastBmi : '') + (m.lastCategory ? ' · ' + m.lastCategory : '') + '</div></div>';
-      item.addEventListener('click', function() {
-        document.getElementById('name').value = m.name;
-        hideAutocomplete();
-        fetchHistory(m.name);
-      });
-      list.appendChild(item);
-    });
-    list.classList.add('visible');
-    autocompleteActive = -1;
-  }
-
-  // Close autocomplete when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.name-wrapper')) hideAutocomplete();
-  });
 
   // ── AUTO SEARCH (NAME HISTORY) ────────────────────────────────
   function onNameInput(value) {
@@ -1505,16 +1351,8 @@ if (!name) {
 
     if (!trimmed || trimmed.length < 2) {
       historyCard.classList.remove('visible');
-      hideAutocomplete();
       return;
     }
-
-    // Show autocomplete suggestions from cache immediately
-    const lc = trimmed.toLowerCase();
-    const matches = nameCache.filter(function(m) {
-      return m.name.toLowerCase().includes(lc);
-    });
-    showAutocomplete(matches);
 
     // Debounce 500ms then fetch
     searchTimeout = setTimeout(() => fetchHistory(trimmed), 500);
@@ -1545,20 +1383,6 @@ if (!name) {
       if (!Array.isArray(records) || records.length === 0) {
         list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px;">No records found for "' + name + '".</div>';
         return;
-      }
-
-      // Populate name cache for autocomplete (deduplicate)
-      const newest = records[records.length - 1] || {};
-      const existingIdx = nameCache.findIndex(function(m){ return m.name.toLowerCase() === name.toLowerCase(); });
-      const cacheEntry = { name: newest.name || name, lastDate: newest.date ? parseSheetDate(newest.date) : '', lastBmi: newest.bmi || '', lastCategory: newest.category || '' };
-      if (existingIdx >= 0) nameCache[existingIdx] = cacheEntry;
-      else nameCache.push(cacheEntry);
-
-      // Show current autocomplete matches
-      const lc = (document.getElementById('name').value || '').toLowerCase();
-      if (lc.length >= 2) {
-        const matches = nameCache.filter(function(m){ return m.name.toLowerCase().includes(lc); });
-        showAutocomplete(matches);
       }
 
       // Show newest records first
